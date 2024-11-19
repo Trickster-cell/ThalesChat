@@ -15,7 +15,7 @@ import { ErrorHandler } from "../utils/utility.js";
 
 // Create a new user and save it to the database and save token in cookie
 const newUser = TryCatch(async (req, res, next) => {
-  const { name, username, password, bio } = req.body;
+  const { name, username, password, bio, public_key } = req.body;
 
   const file = req.file;
 
@@ -34,6 +34,7 @@ const newUser = TryCatch(async (req, res, next) => {
     username,
     password,
     avatar,
+    public_key,
   });
 
   sendToken(res, user, 201, "User created");
@@ -101,6 +102,19 @@ const searchUser = TryCatch(async (req, res) => {
   return res.status(200).json({
     success: true,
     users,
+  });
+});
+
+const getPublicKey = TryCatch(async (req, res, next) => {
+  // console.log("1");
+  const { userId } = req.body;
+
+  const user = await User.findById(userId);
+
+  if (!user) return next(new ErrorHandler("User not found", 404));
+  res.status(200).json({
+    success: true,
+    user,
   });
 });
 
@@ -239,4 +253,5 @@ export {
   newUser,
   searchUser,
   sendFriendRequest,
+  getPublicKey,
 };

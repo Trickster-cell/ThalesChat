@@ -78,37 +78,48 @@ io.on("connection", (socket) => {
   const user = socket.user;
   userSocketIDs.set(user._id.toString(), socket.id);
 
-  socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
-    const messageForRealTime = {
-      content: message,
-      _id: uuid(),
-      sender: {
-        _id: user._id,
-        name: user.name,
-      },
-      chat: chatId,
-      createdAt: new Date().toISOString(),
-    };
+  socket.on(
+    NEW_MESSAGE,
+    async ({ chatId, members, enc_message, self_encrypt }) => {
+      const messageForRealTime = {
+        enc_content: enc_message,
+        self_content:self_encrypt,
+        _id: uuid(),
+        sender: {
+          _id: user._id,
+          name: user.name,
+        },
+        chat: chatId,
+        // self_content: self_encrypt,
+        createdAt: new Date().toISOString(),
+      };
 
-    const messageForDB = {
-      content: message,
-      sender: user._id,
-      chat: chatId,
-    };
+      // console.log(messageForRealTime);
+      // console.log(enc_message, self_encrypt);
 
-    const membersSocket = getSockets(members);
-    io.to(membersSocket).emit(NEW_MESSAGE, {
-      chatId,
-      message: messageForRealTime,
-    });
-    io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
+      const messageForDB = {
+        enc_content: enc_message,
+        self_content: self_encrypt,
+        sender: user._id,
+        chat: chatId,
+        // sel: key,
+      };
 
-    try {
-      await Message.create(messageForDB);
-    } catch (error) {
-      throw new Error(error);
+      const membersSocket = getSockets(members);
+      io.to(membersSocket).emit(NEW_MESSAGE, {
+        chatId,
+        message: messageForRealTime,
+      });
+      // console.log(messageForDB);
+      io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
+
+      try {
+        await Message.create(messageForDB);
+      } catch (error) {
+        throw new Error(error);
+      }
     }
-  });
+  );
 
   socket.on(START_TYPING, ({ members, chatId }) => {
     const membersSockets = getSockets(members);

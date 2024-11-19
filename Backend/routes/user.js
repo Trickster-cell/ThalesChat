@@ -4,6 +4,7 @@ import {
   getMyFriends,
   getMyNotifications,
   getMyProfile,
+  getPublicKey,
   login,
   logout,
   newUser,
@@ -34,6 +35,8 @@ app.get("/me", getMyProfile);
 app.get("/logout", logout);
 
 app.get("/search", searchUser);
+
+app.post("/public_key", getPublicKey);
 
 app.put(
   "/sendrequest",

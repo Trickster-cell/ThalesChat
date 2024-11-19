@@ -32,8 +32,13 @@ import { setIsFileMenu } from "../redux/reducers/misc";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { TypingLoader } from "../components/layout/Loaders";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { server } from "../constants/config";
+import { decrypt_message, encrypt_message } from "../../test/Secret_key_gen";
+import { encryptFinal, finalDecrypt, generateKeys } from "../lib/cryptoModule";
 
 const Chat = ({ chatId, user }) => {
+  // console.log("1",user);
   const socket = getSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -52,6 +57,8 @@ const Chat = ({ chatId, user }) => {
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
 
+  // console.log(chatDetails);
+
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
 
   const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
@@ -68,6 +75,38 @@ const Chat = ({ chatId, user }) => {
   ];
 
   const members = chatDetails?.data?.chat?.members;
+
+  const otherMemberId = members?.find((member) => member !== user._id);
+
+  const [otherUserPublicKey, setOtherUserPublicKey] = useState("");
+
+  const config = {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  useEffect(() => {
+    const fetchPublicKey = async () => {
+      try {
+        const response = await axios.post(
+          `${server}/api/v1/user/public_key`,
+          { userId: otherMemberId }, // Request body
+          config // Configuration object
+        );
+        // console.log(response.data.user.public_key);
+        if (response.data) {
+          setOtherUserPublicKey(response.data.user.public_key);
+        }
+      } catch (error) {
+        console.error("Error fetching public key:", error);
+      }
+    };
+
+    fetchPublicKey();
+  }, [otherMemberId, server]);
+  // console.log(otherMember);
 
   const messageOnChange = (e) => {
     setMessage(e.target.value);
@@ -95,8 +134,46 @@ const Chat = ({ chatId, user }) => {
 
     if (!message.trim()) return;
 
+    // console.log(message);
+
+    // const Keys = generateKeys();
+
+    const enc_self_msg = JSON.stringify(
+      encrypt_message(JSON.parse(user.public_key), message)
+    );
+
+    const enc_msg = JSON.stringify(
+      encrypt_message(JSON.parse(otherUserPublicKey), message)
+    );
+
+    // console.log(message);
+
+    const merPubKey = JSON.parse(user.public_key);
+
+    const enc_test = encryptFinal(message, merPubKey);
+
+    const enc_usk = encryptFinal(message, JSON.parse(otherUserPublicKey));
+
+    // console.log(typeof enc_test);
+
+    const merPvtKey = JSON.parse(localStorage.getItem("pvt_key"));
+
+    const dec_test = finalDecrypt(enc_test, merPvtKey);
+
+    // console.log("1", dec_test);
+
+    // console.log(message, enc_self_msg, enc_msg);
+
+    // console.log(decrypted);
     // Emitting the message to the server
-    socket.emit(NEW_MESSAGE, { chatId, members, message });
+    socket.emit(NEW_MESSAGE, {
+      chatId,
+      members,
+      // message,
+      enc_message: JSON.stringify(enc_usk),
+      self_encrypt: JSON.stringify(enc_test),
+    });
+    // console.log(allMessages);
     setMessage("");
   };
 
@@ -125,8 +202,10 @@ const Chat = ({ chatId, user }) => {
   const newMessagesListener = useCallback(
     (data) => {
       if (data.chatId !== chatId) return;
+      // console.log("aa", data.message);
 
       setMessages((prev) => [...prev, data.message]);
+      // console.log(messages);
     },
     [chatId]
   );
@@ -179,6 +258,8 @@ const Chat = ({ chatId, user }) => {
 
   const allMessages = [...oldMessages, ...messages];
 
+  // console.log(allMessages);
+
   return chatDetails.isLoading ? (
     <Skeleton />
   ) : (
@@ -195,9 +276,10 @@ const Chat = ({ chatId, user }) => {
           overflowY: "auto",
         }}
       >
-        {allMessages.map((i) => (
-          <MessageComponent key={i._id} message={i} user={user} />
-        ))}
+        {allMessages.map((i) => {
+          // console.log(i); // Log each item
+          return <MessageComponent key={i._id} message={i} user={user} />;
+        })}
 
         {userTyping && <TypingLoader />}
 

@@ -2,7 +2,12 @@ import mongoose, { Schema, model, Types } from "mongoose";
 
 const schema = new Schema(
   {
-    content: String,
+    enc_content: { type: String, required: true },
+
+    self_content: {
+      type: String,
+      required: true,
+    },
 
     attachments: [
       {

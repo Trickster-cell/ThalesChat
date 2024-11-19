@@ -114,21 +114,25 @@ const allMessages = TryCatch(async (req, res) => {
     .populate("sender", "name avatar")
     .populate("chat", "groupChat");
 
-  const transformedMessages = messages.map(
-    ({ content, attachments, _id, sender, createdAt, chat }) => ({
+  // console.log(messages);
+
+  const transformedMessages = messages.map(({ attachments, _id, sender, createdAt, chat }) => {
+    // console.log(sender); // Log the `_id` properly
+    return {
       _id,
       attachments,
-      content,
+      // content, // Uncomment if you need it
       createdAt,
-      chat: chat._id,
+      chat: chat?._id,
       groupChat: chat.groupChat,
       sender: {
-        _id: sender._id,
-        name: sender.name,
-        avatar: sender.avatar.url,
+        _id: sender?._id,
+        name: sender?.name,
+        avatar: sender?.avatar.url,
       },
-    })
-  );
+    };
+  });
+  
 
   return res.status(200).json({
     success: true,

@@ -17,6 +17,7 @@ import {
   Group as GroupIcon,
   Logout as LogoutIcon,
   Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -67,6 +68,7 @@ const Header = () => {
       });
       dispatch(userNotExists());
       toast.success(data.message);
+      localStorage.clear();
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
@@ -88,7 +90,7 @@ const Header = () => {
                 display: { xs: "none", sm: "block" },
               }}
             >
-              Chattu
+              QuSeChat
             </Typography>
 
             <Box
@@ -113,16 +115,17 @@ const Header = () => {
               />
 
               <IconBtn
-                title={"New Group"}
-                icon={<AddIcon />}
+                title={"Settings"}
+                icon={<SettingsIcon />}
                 onClick={openNewGroup}
+                value={!localStorage.getItem("pvt_key") && "!"}
               />
 
-              <IconBtn
+              {/* <IconBtn
                 title={"Manage Groups"}
                 icon={<GroupIcon />}
                 onClick={navigateToGroup}
-              />
+              /> */}
 
               <IconBtn
                 title={"Notifications"}

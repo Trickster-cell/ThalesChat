@@ -16,7 +16,7 @@ const database = "ThalesAPP";
 const connectDB = async (server) => {
   try {
     mongoose.set("strictQuery", false);
-    console.log(`${server}${database}`);
+    console.log(`${server}/${database}`);
     const uri = `${server}/${database}`;
     await mongoose.connect(uri);
     console.log("Connected to MongoDB");

@@ -5,9 +5,20 @@ import moment from "moment";
 import { fileFormat } from "../../lib/features";
 import RenderAttachment from "./RenderAttachment";
 import { motion } from "framer-motion";
+import { decrypt_message } from "../../../test/Secret_key_gen";
+import { finalDecrypt } from "../../lib/cryptoModule";
 
 const MessageComponent = ({ message, user }) => {
-  const { sender, content, attachments = [], createdAt } = message;
+  const {
+    sender,
+    content,
+    enc_content,
+    self_content,
+    attachments = [],
+    createdAt,
+  } = message;
+
+  // console.log("11", enc_content);
 
   const sameSender = sender?._id === user?._id;
 
@@ -32,7 +43,15 @@ const MessageComponent = ({ message, user }) => {
         </Typography>
       )}
 
-      {content && <Typography>{content}</Typography>}
+      {/* {content && <Typography>{content}</Typography>} */}
+      {self_content && enc_content && (
+        <Typography>
+          {finalDecrypt(
+            sameSender ? JSON.parse(self_content) : JSON.parse(enc_content),
+            JSON.parse(localStorage.getItem("pvt_key"))
+          )}
+        </Typography>
+      )}
 
       {attachments.length > 0 &&
         attachments.map((attachment, index) => {

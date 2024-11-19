@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
@@ -19,6 +19,8 @@ import { bgGradient } from "../constants/color";
 import { server } from "../constants/config";
 import { userExists } from "../redux/reducers/auth";
 import { usernameValidator } from "../utils/validators";
+import { Secret_key } from "../../test/Secret_key_gen";
+import { generateKeys } from "../lib/cryptoModule";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -70,13 +72,30 @@ const Login = () => {
     }
   };
 
+  function downloadKey() {
+    const keyData = localStorage.getItem("pvt_key"); // Retrieve the data from localStorage
+    const blob = new Blob([keyData], { type: "application/json" }); // Create a Blob with the data
+    const url = URL.createObjectURL(blob); // Generate a download URL
+    const a = document.createElement("a"); // Create an anchor element
+    a.href = url;
+    a.download = `private_key.json`; // File name
+    document.body.appendChild(a); // Append the anchor to the document
+    a.click(); // Trigger the download
+    document.body.removeChild(a); // Clean up by removing the anchor
+    URL.revokeObjectURL(url); // Revoke the URL
+  }
+
   const handleSignUp = async (e) => {
     e.preventDefault();
 
     const toastId = toast.loading("Signing Up...");
     setIsLoading(true);
+    const Keys = generateKeys();
 
+    const public_key = Keys.PublicKey;
+    const sec_key = Keys.SecretKey;
     const formData = new FormData();
+    formData.append("public_key", JSON.stringify(public_key));
     formData.append("avatar", avatar.file);
     formData.append("name", name.value);
     formData.append("bio", bio.value);
@@ -101,6 +120,9 @@ const Login = () => {
       toast.success(data.message, {
         id: toastId,
       });
+      localStorage.clear();
+      localStorage.setItem("pvt_key", JSON.stringify(sec_key));
+      downloadKey({ name: formData.get("name") });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something Went Wrong", {
         id: toastId,
