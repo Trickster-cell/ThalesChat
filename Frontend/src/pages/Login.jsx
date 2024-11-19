@@ -11,16 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
 import { bgGradient } from "../constants/color";
 import { server } from "../constants/config";
+import { generateKeys } from "../lib/cryptoModule";
 import { userExists } from "../redux/reducers/auth";
 import { usernameValidator } from "../utils/validators";
-import { Secret_key } from "../../test/Secret_key_gen";
-import { generateKeys } from "../lib/cryptoModule";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);

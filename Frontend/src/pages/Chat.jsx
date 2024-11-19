@@ -1,3 +1,10 @@
+import { useInfiniteScrollTop } from "6pp";
+import {
+  AttachFile as AttachFileIcon,
+  Send as SendIcon,
+} from "@mui/icons-material";
+import { IconButton, Skeleton, Stack } from "@mui/material";
+import axios from "axios";
 import React, {
   Fragment,
   useCallback,
@@ -5,17 +12,15 @@ import React, {
   useRef,
   useState,
 } from "react";
-import AppLayout from "../components/layout/AppLayout";
-import { IconButton, Skeleton, Stack } from "@mui/material";
-import { grayColor, orange } from "../constants/color";
-import {
-  AttachFile as AttachFileIcon,
-  Send as SendIcon,
-} from "@mui/icons-material";
-import { InputBox } from "../components/styles/StyledComponents";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import FileMenu from "../components/dialogs/FileMenu";
+import AppLayout from "../components/layout/AppLayout";
+import { TypingLoader } from "../components/layout/Loaders";
 import MessageComponent from "../components/shared/MessageComponent";
-import { getSocket } from "../socket";
+import { InputBox } from "../components/styles/StyledComponents";
+import { grayColor, orange } from "../constants/color";
+import { server } from "../constants/config";
 import {
   ALERT,
   CHAT_JOINED,
@@ -24,18 +29,12 @@ import {
   START_TYPING,
   STOP_TYPING,
 } from "../constants/events";
-import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { useErrors, useSocketEvents } from "../hooks/hook";
-import { useInfiniteScrollTop } from "6pp";
-import { useDispatch } from "react-redux";
-import { setIsFileMenu } from "../redux/reducers/misc";
+import { encryptFinal } from "../lib/cryptoModule";
+import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
-import { TypingLoader } from "../components/layout/Loaders";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { server } from "../constants/config";
-import { decrypt_message, encrypt_message } from "../../test/Secret_key_gen";
-import { encryptFinal, finalDecrypt, generateKeys } from "../lib/cryptoModule";
+import { setIsFileMenu } from "../redux/reducers/misc";
+import { getSocket } from "../socket";
 
 const Chat = ({ chatId, user }) => {
   // console.log("1",user);
@@ -138,13 +137,13 @@ const Chat = ({ chatId, user }) => {
 
     // const Keys = generateKeys();
 
-    const enc_self_msg = JSON.stringify(
-      encrypt_message(JSON.parse(user.public_key), message)
-    );
+    // const enc_self_msg = JSON.stringify(
+    //   encrypt_message(JSON.parse(user.public_key), message)
+    // );
 
-    const enc_msg = JSON.stringify(
-      encrypt_message(JSON.parse(otherUserPublicKey), message)
-    );
+    // const enc_msg = JSON.stringify(
+    //   encrypt_message(JSON.parse(otherUserPublicKey), message)
+    // );
 
     // console.log(message);
 
@@ -156,9 +155,9 @@ const Chat = ({ chatId, user }) => {
 
     // console.log(typeof enc_test);
 
-    const merPvtKey = JSON.parse(localStorage.getItem("pvt_key"));
+    // const merPvtKey = JSON.parse(localStorage.getItem("pvt_key"));
 
-    const dec_test = finalDecrypt(enc_test, merPvtKey);
+    // const dec_test = finalDecrypt(enc_test, merPvtKey);
 
     // console.log("1", dec_test);
 
