@@ -35,6 +35,7 @@ import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { setIsFileMenu } from "../redux/reducers/misc";
 import { getSocket } from "../socket";
+import toast from "react-hot-toast";
 
 const Chat = ({ chatId, user }) => {
   // console.log("1",user);
@@ -106,6 +107,18 @@ const Chat = ({ chatId, user }) => {
     fetchPublicKey();
   }, [otherMemberId, server]);
   // console.log(otherMember);
+
+  const hasShownToast = useRef(false);
+
+  useEffect(() => {
+    const privateKey = localStorage.getItem("pvt_key");
+
+    if (!privateKey && !hasShownToast.current) {
+      hasShownToast.current = true; // Mark as shown
+      navigate("/");
+      toast.error("Private Key not found!");
+    }
+  }, [navigate]);
 
   const messageOnChange = (e) => {
     setMessage(e.target.value);
