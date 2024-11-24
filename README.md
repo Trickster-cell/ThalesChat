@@ -1,5 +1,5 @@
 
-# Quantum Secure Real Time Chat Application
+# Quantum Secure Real-Time Chat Application
 
 This repository contains the **Frontend** and **Backend** of a full-stack application built using **React** and **Node.js**. The application uses **MongoDB** as the database, and **MongoDB Compass** is required for managing the database locally.
 
@@ -68,38 +68,31 @@ Sample `.env` files are provided in both `Frontend` and `Backend` folders. Updat
 Located in the `Frontend` folder, the sample `.env` file looks like this:
 
 ```env
-
-
-VITE_SERVER = http://localhost:3000
+VITE_SERVER=http://localhost:3000
 ```
 
-- `REACT_APP_API_URL`: URL of the Backend server.
+- `VITE_SERVER`: URL of the Backend server.
 
 #### Backend `.env`
 Located in the `Backend` folder, the sample `.env` file looks like this:
 
 ```env
-
-
 MONGO_URI=mongodb://127.0.0.1:27017
 JWT_SECRET=JWTSECRETKEY
-
-ADMIN_SECRET_KEY= sample admin kjey
-
-NODE_ENV = DEVELOPMENT
-
-CLIENT_URL = http://localhost:5173/
-
-
-CLOUDINARY_CLOUD_NAME= cloudinarycloudname
-CLOUDINARY_API_KEY = cloudinaryapikey
-CLOUDINARY_API_SECRET =  cloudinaryapisecret
-
+ADMIN_SECRET_KEY=sample_admin_key
+NODE_ENV=DEVELOPMENT
+CLIENT_URL=http://localhost:5173/
+CLOUDINARY_CLOUD_NAME=cloudinarycloudname
+CLOUDINARY_API_KEY=cloudinaryapikey
+CLOUDINARY_API_SECRET=cloudinaryapisecret
 ```
 
-- `PORT`: The port on which the Backend server will run.
 - `MONGO_URI`: MongoDB connection URI. Replace `your-database-name` with your desired database name.
 - `JWT_SECRET`: A secret key for JWT authentication.
+- `ADMIN_SECRET_KEY`: Secret key for admin operations.
+- `NODE_ENV`: The environment mode (`DEVELOPMENT` or `PRODUCTION`).
+- `CLIENT_URL`: URL of the Frontend.
+- `CLOUDINARY_*`: Cloudinary configuration for file uploads.
 
 ---
 
@@ -148,23 +141,7 @@ CLOUDINARY_API_SECRET =  cloudinaryapisecret
 ## Troubleshooting
 
 - **MongoDB Connection Issues**: Ensure MongoDB is running and accessible via the `MONGO_URI` defined in the `.env` file.
-- **Port Conflicts**: Ensure the ports `3000` (Frontend) and `5000` (Backend) are not in use by other applications.
+- **Port Conflicts**: Ensure the ports `3000` (Backend) and `5173` (Frontend) are not in use by other applications.
 - **Environment Variables**: Double-check the `.env` files for typos or missing values.
 
 ---
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -m 'Add feature'`).
-4. Push to the branch (`git push origin feature-name`).
-5. Open a Pull Request.
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
