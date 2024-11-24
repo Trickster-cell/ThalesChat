@@ -1,7 +1,6 @@
 
 
-MONGO_URI = mongodb://localhost:27017
-
+MONGO_URI=mongodb://127.0.0.1:27017
 JWT_SECRET=djgjkdshbgjkhfnjksdfhbnsjkdfsdhjfk
 
 ADMIN_SECRET_KEY= sample admin kjey
@@ -11,6 +10,6 @@ NODE_ENV = DEVELOPMENT
 CLIENT_URL = http://localhost:5173/
 
 
-CLOUDINARY_CLOUD_NAME= drxdqo1xr
-CLOUDINARY_API_KEY = 264938527261548
-CLOUDINARY_API_SECRET =  _p_Ry226TikW-TTJHuX9wSU_zEQ
+CLOUDINARY_CLOUD_NAME= cloudinarycloudname
+CLOUDINARY_API_KEY = cloudinaryapikey
+CLOUDINARY_API_SECRET =  cloudinaryapisecret
