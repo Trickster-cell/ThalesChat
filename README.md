@@ -68,7 +68,9 @@ Sample `.env` files are provided in both `Frontend` and `Backend` folders. Updat
 Located in the `Frontend` folder, the sample `.env` file looks like this:
 
 ```env
-REACT_APP_API_URL=http://localhost:5000
+
+
+VITE_SERVER = http://localhost:3000
 ```
 
 - `REACT_APP_API_URL`: URL of the Backend server.
